@@ -1,7 +1,7 @@
 package com.jianchen.guava.base;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.jianchen.guava.po.Person;
@@ -12,7 +12,7 @@ import org.junit.runners.JUnit4;
 
 /**
  * User: kunshuo
- * Date: 13-12-17 Time: ÏÂÎç3:57
+ * Date: 13-12-17 Time: ????3:57
  * company:jianchen.com
  */
 @RunWith(JUnit4.class)
@@ -35,6 +35,13 @@ public class TestBase {
         String str1 = "my,name:is;jianchen";
         System.out.println(Splitter.on(CharMatcher.anyOf(":,;")).split(str1));  //[my, name, is, jianchen]
 
+    }
+    @Test
+    public void testJoiner(){
+        // Bad! Do not do this!
+        Joiner joiner = Joiner.on(',');
+        joiner.skipNulls(); // does nothing!  added by jianchen:è¿™ä¹ˆå†™å°±å¯¹äº†  joiner = joiner.skipNulls();
+        System.out.println(joiner.join("wrong", null, "wrong"));
     }
 
 }
