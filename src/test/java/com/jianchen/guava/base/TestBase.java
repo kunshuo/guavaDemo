@@ -15,6 +15,8 @@ import org.junit.runners.JUnit4;
 import java.util.List;
 import java.util.Map;
 
+import static org.fest.assertions.Assertions.assertThat;
+
 /**
  * User: kunshuo
  * Date: 13-12-17
@@ -41,16 +43,20 @@ public class TestBase {
     @Test
     public void testSplitter() {
         String str1 = "my,name:is;jianchen";
-        System.out.println(Splitter.on(CharMatcher.anyOf(":,;")).split(str1));  //[my, name, is, jianchen]
+        Iterable<String> iterables = Splitter.on(CharMatcher.anyOf(":,;")).split(str1);  //[my, name, is, jianchen]
+        assertThat(iterables.iterator().next().equals("my"));
+        assertThat(iterables.iterator().next().equals("name"));
+        assertThat(iterables.iterator().next().equals("is"));
+        assertThat(iterables.iterator().next().equals("jianchen"));
 
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testJoiner() {
         // Bad! Do not do this!
         Joiner joiner = Joiner.on(',');
         joiner.skipNulls(); // does nothing!  added by jianchen:这么写就对了  joiner = joiner.skipNulls();
-        System.out.println(joiner.join("wrong", null, "wrong"));
+        joiner.join("wrong", null, "wrong");
 
 
     }
@@ -61,8 +67,8 @@ public class TestBase {
         map.put("mame", "jianchen");
         map.put("age", 25);
         map.put("sex", "Male");
-        System.out.println(Joiner.on("&").withKeyValueSeparator("=").join(map));//sex=Male&mame=jianchen&age=25
-
+        String result = Joiner.on("&").withKeyValueSeparator("=").join(map);
+        assertThat(result).isEqualTo("sex=Male&mame=jianchen&age=25");
         //可以进一步了解下Multimap的用法
 
     }
@@ -84,22 +90,26 @@ public class TestBase {
 
         List<Integer> numbers = Lists.newArrayList(1, 14, 5, 9, 20);
         List<Integer> naturalNumbers = Ordering.natural().sortedCopy(numbers);
-        System.out.println(naturalNumbers); //[1, 5, 9, 14, 20]
-        System.out.println(Ordering.natural().reverse().sortedCopy(numbers)); //[20, 14, 9, 5, 1]
+        assertThat(naturalNumbers).isEqualTo(Lists.newArrayList(1, 5, 9, 14, 20)); //[1, 5, 9, 14, 20]
+        assertThat(Ordering.natural().reverse().sortedCopy(numbers)).isEqualTo(Lists.newArrayList(20, 14, 9, 5, 1)); //[20, 14, 9, 5, 1]
         Integer maxNumber = Ordering.natural().max(numbers);
         Integer minNumber = Ordering.natural().min(numbers);
-        System.out.println(minNumber); //1
-        System.out.println(maxNumber); //20
+        assertThat(minNumber).isEqualTo(1);
+        assertThat(maxNumber).isEqualTo(20);
+
 
         List<Integer> list1 = Lists.newArrayList(1, 14, 5, 9, 20, null);
         List<Integer> result = Ordering.natural().nullsFirst().sortedCopy(list1);
-        System.out.println(result);//[null, 1, 5, 9, 14, 20]
-        System.out.println(Ordering.natural().nullsLast().sortedCopy(list1)); //[1, 5, 9, 14, 20, null]
+        assertThat(result).hasSize(6);
+        assertThat(result).contains(1);
+        assertThat(result.get(0)).isNull();
 
-        System.out.println(Ordering.natural().isOrdered(list1));//false
-        System.out.println(Ordering.natural().binarySearch(result, 14));  //返回在数组中的索引位置
-        System.out.println(Ordering.natural().leastOf(numbers, 3)); //[1, 5, 9]
-        System.out.println(numbers); //[1, 14, 5, 9, 20] ---number集合没有变化
+        assertThat(Ordering.natural().nullsLast().sortedCopy(list1)).containsSequence(1, 5, 9, 14, 20, null); //[1, 5, 9, 14, 20, null]
+
+        assertThat(Ordering.natural().isOrdered(list1)).isFalse();//false
+        assertThat(Ordering.natural().binarySearch(result, 14)).isEqualTo(4);  //返回在数组中的索引位置
+        assertThat(Ordering.natural().leastOf(numbers, 3)).isEqualTo(Lists.newArrayList(1, 5, 9)); //[1, 5, 9]
+        assertThat(numbers).isEqualTo(Lists.newArrayList(1, 14, 5, 9, 20)); //[1, 14, 5, 9, 20] ---number集合没有变化
     }
 
 
