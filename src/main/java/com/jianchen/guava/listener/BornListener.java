@@ -11,7 +11,7 @@ import com.google.common.eventbus.Subscribe;
 public class BornListener {
 
     @Subscribe
-    public void registerToCountry(BornEvent event) {
+     public void registerToCountry(BornEvent event) {
         System.out.println("向公安局登记注册，一个婴儿出生了，出生日期为" +
                 event.getBirthday() + ",出生地为" + event.getBornPlace());
     }
