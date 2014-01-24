@@ -122,4 +122,27 @@ public class TestMap {
         smm.putAll(map2);
         assertThat(smm.size()).isEqualTo(2); //name对应到两个value。所以size=2
     }
+
+    /**
+     * TreeMultimap继承自SetMultimap，且有序
+     */
+    @Test
+    public void testTreeMultimap(){
+        TreeMultimap<String,String> treeMultimap = TreeMultimap.create();
+        treeMultimap.put("name","jianchen");
+        treeMultimap.put("sex","male");
+        treeMultimap.put("name","jianchen1");
+        treeMultimap.put("name","jianchen");
+        treeMultimap.put("age","26");
+        treeMultimap.put("birthday","2013-01-23");
+
+        assertThat(treeMultimap.get("name").size()).isEqualTo(2);
+        assertThat(treeMultimap.size()).isEqualTo(5);
+        assertThat(treeMultimap.keySet().first()).isEqualTo("age");
+        assertThat(treeMultimap.keySet().last()).isEqualTo("sex");
+        assertThat(treeMultimap.keySet().pollFirst()).isEqualTo("age") ;//poolFirst方法返回并移除最前面的元素，所以对原来的集合也产生了影响
+        assertThat(treeMultimap.keySet().size()).isEqualTo(3);
+        assertThat(treeMultimap.size()).isEqualTo(4);
+
+    }
 }
